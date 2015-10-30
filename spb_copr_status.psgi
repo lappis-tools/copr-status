@@ -39,7 +39,15 @@ sub info2html {
   my $table_entries="";
   foreach my $key (%{$inforef}) {
     next if(ref($key) eq 'HASH');
-    $table_entries .= "<tr>
+    my $fill_row;
+    if($inforef->{$key}->{'v4_version'} eq $inforef->{$key}->{'v5_version'}) {
+      $fill_row = "success";
+    }
+    else {
+      $fill_row = "danger";
+    }
+
+    $table_entries .= "<tr class=\"$fill_row\">
     <td>$key</td>
     <td>$inforef->{$key}->{'v4_version'}</td>
     <td>$inforef->{$key}->{'v5_version'}</td>
@@ -70,6 +78,6 @@ my $app = sub {
 };
 
 builder {
-    enable "Static", path => qr!^(/css|/js|/fonts)!;
+    enable "Static", path => qr!^(/css|/js)!;
       $app;
 }

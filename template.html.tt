@@ -13,14 +13,49 @@
 <![endif]-->
   </head>
   <body>
-    <table class="table table-striped">
-      <tr>
-        <th>PACKAGE</th>
-        <th>softwarepublico/v4</th>
-        <th>softwarepublico/v5</th>
-      </tr>
-      {$table_entries}
-    </table>
+    <div class="container">
+
+      <div class="header clearfix">
+        <nav>
+          <ul class="nav nav-pills pull-right">
+            <li role="presentation"><a href="https://copr.fedoraproject.org/coprs/softwarepublico/v4/">softwarepublico/v4</a></li>
+            <li role="presentation"><a href="https://copr.fedoraproject.org/coprs/softwarepublico/v5/">softwarepublico/v5</a></li>
+            <li role="presentation"><a href="https://softwarepublico.gov.br">SPB</a></li>
+          </ul>
+        </nav>
+        <h3 class="text-muted">SPB Copr Status</h3>
+      </div>
+
+      <div class="jumbotron">
+        <p class="lead">This app fetches data from softwarepublico Copr EPEL7 repositories and compare package versions. In short, red rows mean package versions differ among the repositories (<b>note that this it NOT necessarily a bad thing</b>).</p>
+        <div class="row">
+          <div class="col-md-6 col-md-offset-3">
+            <table class="table table-striped">
+              <tr>
+                <td class="success">Versions match</td>
+              </tr>
+              <tr>
+                <td class="danger">Versions do not match</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <table class="table table-striped">
+        <tr>
+          <th>PACKAGE</th>
+          <th>softwarepublico/v4</th>
+          <th>softwarepublico/v5</th>
+        </tr>
+        {$table_entries}
+      </table>
+
+      <footer class="footer">
+        <p>2015 LAPPIS - #softwarepublico @ Freenode</p>
+      </footer>
+
+    </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
   </body>
