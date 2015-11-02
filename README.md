@@ -11,7 +11,7 @@ Note that this app consists of a single PSGI script, a template file and Bootstr
 In order to use this app you will need perl 5 and the following perl modules installed:
 
 Plack
-LWP::Simple
+LWP::UserAgent
 JSON
 Text::Template
 

@@ -59,19 +59,27 @@ sub info2html {
   my $table_entries="";
   foreach my $key (%{$info}) {
     next if(ref($key) eq 'HASH');
-    my $fill_row;
-    if($info->{$key}->{'v4_version'} eq $info->{$key}->{'v5_version'} && $info->{$key}->{'v4_version'} eq $info->{$key}->{git_version}) {
-      $fill_row = "success";
+    my $fill_v4_row;
+    my $fill_v5_row;
+    if($info->{$key}->{'v4_version'} eq $info->{$key}->{git_version}) {
+      $fill_v4_row = "success";
     }
     else {
-      $fill_row = "danger";
+      $fill_v4_row = "danger";
     }
 
-    $table_entries .= "<tr class=\"$fill_row\">
-    <td>$key</td>
-    <td>$info->{$key}->{'v4_version'}</td>
-    <td>$info->{$key}->{'v5_version'}</td>
+    if($info->{$key}->{'v5_version'} eq $info->{$key}->{git_version}) {
+      $fill_v5_row = "success";
+    }
+    else {
+      $fill_v5_row = "danger";
+    }
+
+    $table_entries .= "<tr>
+    <td><b>$key</b></td>
     <td>$info->{$key}->{'git_version'}</td>
+    <td class=\"$fill_v4_row\">$info->{$key}->{'v4_version'}</td>
+    <td class=\"$fill_v5_row\">$info->{$key}->{'v5_version'}</td>
     </tr>";
   }
 

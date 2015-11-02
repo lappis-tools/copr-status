@@ -27,7 +27,7 @@
       </div>
 
       <div class="jumbotron">
-        <p class="lead">This app fetches data from softwarepublico Copr EPEL7 repositories and compares package versions. In short, red rows mean package versions differ among the repositories and/or git (<b>note that this is NOT necessarily a bad thing</b>).</p>
+        <p class="lead">This app fetches data from softwarepublico Copr EPEL7 repositories and compares package versions. In short, a red cell means that the package version differ from the git one (<b>note that this is NOT necessarily a bad thing</b>).</p>
         <div class="row">
           <div class="col-md-6 col-md-offset-3">
             <table class="table table-striped">
@@ -45,9 +45,9 @@
       <table class="table table-striped">
         <tr>
           <th>PACKAGE</th>
+          <th>git</th>
           <th>softwarepublico/v4</th>
           <th>softwarepublico/v5</th>
-          <th>git</th>
         </tr>
         {$table_entries}
       </table>
