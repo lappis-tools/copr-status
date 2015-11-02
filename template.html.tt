@@ -47,6 +47,7 @@
           <th>PACKAGE</th>
           <th>softwarepublico/v4</th>
           <th>softwarepublico/v5</th>
+          <th>git</th>
         </tr>
         {$table_entries}
       </table>

@@ -1,46 +1,66 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
-use LWP::Simple;
 use JSON;
 use Text::Template;
+use LWP::UserAgent;
 use Plack::Builder;
 
+$ENV{'PERL_LWP_SSL_VERIFY_HOSTNAME'} = 0;
+
 sub copr_info {
-  my $result_v4 = get("http://copr.fedoraproject.org/api/coprs/softwarepublico/v4/monitor/");
-  my $result_v5 = get("http://copr.fedoraproject.org/api/coprs/softwarepublico/v5/monitor/");
+  my $ua = LWP::UserAgent->new;
+  $ua->timeout(10);
+  $ua->env_proxy;
+  $ua->ssl_opts(SSL_verify_mode => 0x00);
+  
+  my $result_v4 = $ua->get("http://copr.fedoraproject.org/api/coprs/softwarepublico/v4/monitor/");
+  my $result_v5 = $ua->get("http://copr.fedoraproject.org/api/coprs/softwarepublico/v5/monitor/");
 
   my $json = JSON->new->allow_nonref;
 
-  my $dec_result_v4 = $json->decode($result_v4);
-  my $dec_result_v5 = $json->decode($result_v5);
-  my %info;
-  my $inforef = \%info;
+  my $dec_result_v4 = $json->decode($result_v4->decoded_content);
+  my $dec_result_v5 = $json->decode($result_v5->decoded_content);
+  my $info = {};
 
   foreach(@{$dec_result_v4->{'packages'}}) {
     my $package = $_->{'pkg_name'};
     my $status = $_->{'results'}{'epel-7-x86_64'}{'status'};
     my $version = $_->{'results'}{'epel-7-x86_64'}{'pkg_version'};
-    $inforef->{$package}->{'v4_version'} = $version if $status eq "succeeded";
+    $info->{$package}->{'v4_version'} = $version if $status eq "succeeded";
   }
 
   foreach(@{$dec_result_v5->{'packages'}}) {
     my $package = $_->{'pkg_name'};
     my $status = $_->{'results'}{'epel-7-x86_64'}{'status'};
     my $version = $_->{'results'}{'epel-7-x86_64'}{'pkg_version'};
-    $inforef->{$package}->{'v5_version'} = $version if $status eq "succeeded";
+    $info->{$package}->{'v5_version'} = $version if $status eq "succeeded";
   }
 
-  return $inforef;
+  foreach my $key (%{$info}) {
+    next if(ref($key) eq 'HASH');
+
+    my $spec = $ua->get("https://softwarepublico.gov.br/gitlab/softwarepublico/softwarepublico/raw/master/src/pkg-rpm/$key/$key.spec");
+    my $version = $1 if $spec->decoded_content =~ /^Version:\s*([^\s]+)\s*$/m;
+    if($version =~ /%\{version\}/) {
+      $version = $1 if $spec->decoded_content =~ /define version\s*([^\s]+)\s*$/m;
+    }
+
+    my $release = $1 if $spec->decoded_content =~ /^Release:\s*([^\s]+)\s*$/m;
+    $version = "$version-$release";
+    $info->{$key}->{'git_version'} = $version;
+  }
+
+  return $info;
 }
 
 sub info2html {
-  my $inforef = copr_info();
+  my $info = copr_info();
   my $table_entries="";
-  foreach my $key (%{$inforef}) {
+  foreach my $key (%{$info}) {
     next if(ref($key) eq 'HASH');
     my $fill_row;
-    if($inforef->{$key}->{'v4_version'} eq $inforef->{$key}->{'v5_version'}) {
+    if($info->{$key}->{'v4_version'} eq $info->{$key}->{'v5_version'} && $info->{$key}->{'v4_version'} eq $info->{$key}->{git_version}) {
       $fill_row = "success";
     }
     else {
@@ -49,8 +69,9 @@ sub info2html {
 
     $table_entries .= "<tr class=\"$fill_row\">
     <td>$key</td>
-    <td>$inforef->{$key}->{'v4_version'}</td>
-    <td>$inforef->{$key}->{'v5_version'}</td>
+    <td>$info->{$key}->{'v4_version'}</td>
+    <td>$info->{$key}->{'v5_version'}</td>
+    <td>$info->{$key}->{'git_version'}</td>
     </tr>";
   }
 
