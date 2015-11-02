@@ -99,6 +99,6 @@ my $app = sub {
 };
 
 builder {
-    enable "Static", path => qr!^(/css|/js)!;
+    enable "Static", path => qr!^(/css|/js)!, pass_through => 1;
       $app;
 }
