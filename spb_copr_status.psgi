@@ -55,6 +55,22 @@ sub copr_info {
   return $info;
 }
 
+sub compare_versions {
+  my $info = copr_info();
+  my $match = {};
+  foreach my $key (%{$info}) {
+    next if(ref($key) eq 'HASH');
+    if($info->{$key}->{'v5_version'} eq $info->{$key}->{git_version}) {
+      $match->{$key} = 1;
+    }
+    else {
+      $match->{$key} = 0;
+    }
+  }
+
+  return $match;
+}
+
 sub info2html {
   my $info = copr_info();
   my $table_entries="";
@@ -103,7 +119,8 @@ sub build_html {
 
 my %ROUTING = (
     '/'      => \&serve_html,
-    '/api'  => \&serve_json
+    '/api'  => \&serve_json,
+    '/api/status'  => \&serve_json_status
     );
 
 my $app = sub {
@@ -131,6 +148,17 @@ sub serve_html {
 
 sub serve_json {
   my $info = copr_info();
+  my $json = JSON->new->allow_nonref;
+  my $json_info = $json->encode($info);
+  return [
+    '200',
+    [ 'Content-Type' => 'application/json'],
+    [ $json_info ],
+  ];
+};
+
+sub serve_json_status {
+  my $info = compare_versions();
   my $json = JSON->new->allow_nonref;
   my $json_info = $json->encode($info);
   return [
