@@ -5,6 +5,7 @@ use JSON;
 use Text::Template;
 use LWP::UserAgent;
 use Plack::Builder;
+use Plack::Request;
 
 $ENV{'PERL_LWP_SSL_VERIFY_HOSTNAME'} = 0;
 
@@ -13,7 +14,7 @@ sub copr_info {
   $ua->timeout(10);
   $ua->env_proxy;
   $ua->ssl_opts(SSL_verify_mode => 0x00);
-  
+
   my $result_v4 = $ua->get("http://copr.fedoraproject.org/api/coprs/softwarepublico/v4/monitor/");
   my $result_v5 = $ua->get("http://copr.fedoraproject.org/api/coprs/softwarepublico/v5/monitor/");
 
@@ -91,18 +92,51 @@ sub build_html {
     title => "SPB Copr Stats",
     table_entries => info2html()
   };
+
   my $template = Text::Template->new(
     TYPE => 'FILE',
     SOURCE => 'template.html.tt'
   );
+
   return $template->fill_in(HASH => $data);
 }
 
+my %ROUTING = (
+    '/'      => \&serve_html,
+    '/api'  => \&serve_json
+    );
+
 my $app = sub {
+  my $env = shift;
+
+  my $request = Plack::Request->new($env);
+  my $route = $ROUTING{$request->path_info};
+  if ($route) {
+    return $route->($env);
+  }
+  return [
+    '404',
+    [ 'Content-Type' => 'text/html' ],
+    [ '404 Not Found' ],
+    ];
+};
+
+sub serve_html {
   return [
     '200',
     [ 'Content-Type' => 'text/html'],
     [ build_html() ],
+  ];
+};
+
+sub serve_json {
+  my $info = copr_info();
+  my $json = JSON->new->allow_nonref;
+  my $json_info = $json->encode($info);
+  return [
+    '200',
+    [ 'Content-Type' => 'application/json'],
+    [ $json_info ],
   ];
 };
 
