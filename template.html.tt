@@ -27,7 +27,7 @@
       </div>
 
       <div class="jumbotron">
-        <p class="lead">This app fetches data from softwarepublico Copr EPEL7 repositories and compare package versions. In short, red rows mean package versions differ among the repositories (<b>note that this it NOT necessarily a bad thing</b>).</p>
+        <p class="lead">This app fetches data from softwarepublico Copr EPEL7 repositories and compares package versions. In short, red rows mean package versions differ among the repositories and/or git (<b>note that this is NOT necessarily a bad thing</b>).</p>
         <div class="row">
           <div class="col-md-6 col-md-offset-3">
             <table class="table table-striped">
