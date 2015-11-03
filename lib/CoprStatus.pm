@@ -1,11 +1,8 @@
-#!/usr/bin/perl
+package CoprStatus;
 use strict;
 use warnings;
 use JSON;
 use Text::Template;
-use LWP::UserAgent;
-use Plack::Builder;
-use Plack::Request;
 
 $ENV{'PERL_LWP_SSL_VERIFY_HOSTNAME'} = 0;
 
@@ -117,26 +114,11 @@ sub build_html {
   return $template->fill_in(HASH => $data);
 }
 
-my %ROUTING = (
+our %ROUTING = (
     '/'      => \&serve_html,
     '/api'  => \&serve_json,
     '/api/status'  => \&serve_json_status
     );
-
-my $app = sub {
-  my $env = shift;
-
-  my $request = Plack::Request->new($env);
-  my $route = $ROUTING{$request->path_info};
-  if ($route) {
-    return $route->($env);
-  }
-  return [
-    '404',
-    [ 'Content-Type' => 'text/html' ],
-    [ '404 Not Found' ],
-    ];
-};
 
 sub serve_html {
   return [
@@ -168,7 +150,4 @@ sub serve_json_status {
   ];
 };
 
-builder {
-    enable "Static", path => qr!^(/css|/js)!, pass_through => 1;
-      $app;
-}
+1;
