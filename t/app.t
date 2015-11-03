@@ -1,9 +1,6 @@
 use strict;
 use warnings;
-use Plack::Test;
 use Test::More;
+BEGIN { use_ok('CoprStatus') }
 
-test_psgi $app, sub {
-  my $cb = shift;
-};
 done_testing; 
