@@ -11,7 +11,7 @@ $ENV{'PERL_LWP_SSL_VERIFY_HOSTNAME'} = 0;
 
 sub copr_info {
   my $ua = LWP::UserAgent->new;
-  $ua->timeout(10);
+  $ua->timeout(20);
   $ua->env_proxy;
   $ua->ssl_opts(SSL_verify_mode => 0x00);
 
