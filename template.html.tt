@@ -29,7 +29,7 @@
       <div class="jumbotron">
         <p class="lead">This app fetches data from softwarepublico Copr EPEL7 repositories and compares package versions. In short, a red cell means that the package version differ from the git one (<b>note that this is NOT necessarily a bad thing</b>).</p>
         <div class="row">
-          <div class="col-md-6 col-md-offset-3">
+          <div class="col-lg-6 col-lg-offset-3 col-md-8 col-md-offset-2 col-sm-12 col-xs-12">
             <table class="table table-striped">
               <tr>
                 <td class="success">Versions match</td>
@@ -42,22 +42,26 @@
         </div>
       </div>
 
-      <table class="table table-striped">
-        <tr>
-          <th>PACKAGE</th>
-          <th>git</th>
-          <th>softwarepublico/v4</th>
-          <th>softwarepublico/v5</th>
-        </tr>
-        {$table_entries}
-      </table>
+      <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 table-responsive">
+          <table class="table table-striped">
+            <tr>
+              <th>PACKAGE</th>
+              <th>git</th>
+              <th>softwarepublico/v4</th>
+              <th>softwarepublico/v5</th>
+            </tr>
+              {$table_entries}
+          </table>
+        </div>
+      </div>
 
-      <footer class="footer">
-        <p>2015 LAPPIS - #softwarepublico @ Freenode</p>
-      </footer>
+        <footer class="footer">
+          <p>2015 LAPPIS - #softwarepublico, #lappis, #ccsl-usp @ Freenode</p>
+        </footer>
 
-    </div>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+      </div>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
   </body>
 </html>
