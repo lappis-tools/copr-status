@@ -1,5 +1,7 @@
 # About
 
+[![Join the chat at https://gitter.im/spb-tools/copr-status](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/spb-tools/copr-status?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 This app was built to support the development of Portal do Software Público Brasileiro.
 
 It shows versions for published packages in EPEL7 Fedora Copr repositories.
