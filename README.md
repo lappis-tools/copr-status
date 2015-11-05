@@ -34,11 +34,11 @@ installed:
 below:
 
 ```
-plackup --port PORT_NUMBER APPLICATION.psgi
+plackup [--port PORT_NUMBER] -Ilib
 ```
 
 > For example, try:
 
 ```
-plackup --port 5001 spb_copr_status.psgi
+plackup -Ilib
 ```
