@@ -18,6 +18,7 @@
       <div class="header clearfix">
         <nav>
           <ul class="nav nav-pills pull-right">
+            <li role="presentation"><a href="https://github.com/spb-tools/copr-status/">github</a></li>
             <li role="presentation"><a href="https://copr.fedoraproject.org/coprs/softwarepublico/v4/">softwarepublico/v4</a></li>
             <li role="presentation"><a href="https://copr.fedoraproject.org/coprs/softwarepublico/v5/">softwarepublico/v5</a></li>
             <li role="presentation"><a href="https://softwarepublico.gov.br">SPB</a></li>
