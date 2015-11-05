@@ -2,7 +2,6 @@
 use strict;
 use warnings;
 use CoprStatus;
-use LWP::UserAgent;
 use Plack::Builder;
 use Plack::Request;
 

@@ -3,6 +3,7 @@ use strict;
 use warnings;
 use JSON;
 use Text::Template;
+use LWP::UserAgent;
 
 $ENV{'PERL_LWP_SSL_VERIFY_HOSTNAME'} = 0;
 
