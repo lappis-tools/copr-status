@@ -2,7 +2,7 @@
 
 ----
 
-[![License](https://img.shields.io/badge/license-LGPLv3-green.svg)]("https://github.com/spb-tools/copr-status/COPYING")
+[![License](https://img.shields.io/badge/license-AGPLv3-green.svg)]("https://github.com/spb-tools/copr-status/COPYING")
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/spb-tools/copr-status?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 ----
