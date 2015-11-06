@@ -27,6 +27,11 @@ installed:
 * JSON
 * Text::Template
 
+> Run tests:
+
+```
+prove -Ilib t
+```
 ----
 # How to use
 
