@@ -13,8 +13,8 @@
 
 > This app was built to support the development of Portal do Software Público
 Brasileiro. It shows versions for published packages in EPEL7 Fedora Copr
-repositories. Note that this app consists of a single PSGI script, a template
-file and Bootstrap.
+repositories. Note that this app consists of a single package (CoprSttus), a
+PSGI script, a template file and Bootstrap.
 
 ----
 # Development
