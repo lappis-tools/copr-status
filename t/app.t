@@ -22,6 +22,9 @@ foreach my $key (keys %{$match}) {
   like($match->{$key}, qr/1|0/);
 }
 
-# TODO: test info2html() and build_html()
+my $table = CoprStatus::info2html();
+like($table, qr/danger|success/m);
+my $html = CoprStatus::build_html();
+like($html, qr/SPB Copr Status/m);
 
 done_testing();

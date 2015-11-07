@@ -103,7 +103,7 @@ sub info2html {
 
 sub build_html {
   my $data = {
-    title => "SPB Copr Stats",
+    title => "SPB Copr Status",
     table_entries => info2html()
   };
 
