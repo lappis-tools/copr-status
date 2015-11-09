@@ -36,9 +36,7 @@ sub copr_info {
     $info->{$package}->{'v5_version'} = $version if $status eq "succeeded";
   }
 
-  foreach my $key (%{$info}) {
-    next if(ref($key) eq 'HASH');
-
+  foreach my $key (keys %{$info}) {
     my $spec = $ua->get("https://softwarepublico.gov.br/gitlab/softwarepublico/softwarepublico/raw/master/src/pkg-rpm/$key/$key.spec");
     my $version = $1 if $spec->decoded_content =~ /^Version:\s*([^\s]+)\s*$/m;
     if($version =~ /%\{version\}/) {
@@ -56,8 +54,7 @@ sub copr_info {
 sub compare_versions {
   my $info = copr_info();
   my $match = {};
-  foreach my $key (%{$info}) {
-    next if(ref($key) eq 'HASH');
+  foreach my $key (keys %{$info}) {
     if($info->{$key}->{'v5_version'} eq $info->{$key}->{git_version}) {
       $match->{$key} = 1;
     }
@@ -72,8 +69,7 @@ sub compare_versions {
 sub info2html {
   my $info = copr_info();
   my $table_entries="";
-  foreach my $key (%{$info}) {
-    next if(ref($key) eq 'HASH');
+  foreach my $key (keys %{$info}) {
     my $fill_v4_row;
     my $fill_v5_row;
     if($info->{$key}->{'v4_version'} eq $info->{$key}->{git_version}) {
