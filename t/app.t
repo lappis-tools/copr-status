@@ -8,12 +8,12 @@ my $info = CoprStatus::copr_info();
 ok(ref($info), 'HASH');
 foreach my $key (keys %{$info}) {
   ok(ref($info->{$key}), 'HASH');
-  ok($info->{$key}->{'git_version'});
+  ok($info->{$key}->{'git_version_master'});
   ok($info->{$key}->{'v4_version'});
   ok($info->{$key}->{'v5_version'});
   like($info->{$key}->{'v4_version'}, qr/[[:ascii:]]+-[[:ascii:]]+/);
   like($info->{$key}->{'v5_version'}, qr/[[:ascii:]]+-[[:ascii:]]+/);
-  like($info->{$key}->{'git_version'}, qr/[[:ascii:]]+-[[:ascii:]]+/);
+  like($info->{$key}->{'git_version_master'}, qr/[[:ascii:]]+-[[:ascii:]]+/);
 }
 
 my $match = CoprStatus::compare_versions;
