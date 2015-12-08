@@ -35,9 +35,6 @@ prove -Ilib t
 ----
 # How to use
 
-> If you want to use this app, you can simply using plackup as the command
-below:
-
 ```
 plackup [--port PORT_NUMBER] -Ilib
 ```
