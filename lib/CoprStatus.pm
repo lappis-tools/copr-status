@@ -111,16 +111,7 @@ sub info2html {
 }
 
 sub build_html {
-  my $data = {
-    title => "SPB Copr Status",
-    table_entries => info2html()
-  };
-
-  my $template = Text::Template->new(
-    TYPE => 'FILE',
-    SOURCE => 'template.html.tt'
-  );
-
+  my ( $data, $template ) = @_;
   return $template->fill_in(HASH => $data);
 }
 
@@ -131,10 +122,20 @@ our %ROUTING = (
     );
 
 sub serve_html {
+  my $data = {
+    title => "SPB Copr Status",
+    table_entries => info2html()
+  };
+
+  my $template = Text::Template->new(
+    TYPE => 'FILE',
+    SOURCE => 'template.html.tt'
+  );
+
   return [
     '200',
     [ 'Content-Type' => 'text/html'],
-    [ build_html() ],
+    [ build_html($data, $template) ],
   ];
 };
 
