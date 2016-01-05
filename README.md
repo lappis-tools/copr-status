@@ -26,6 +26,7 @@ installed:
 * LWP::UserAgent
 * JSON
 * Text::Template
+* LWP::Protocol::https
 
 > Run tests:
 
