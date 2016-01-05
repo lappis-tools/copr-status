@@ -1,0 +1,11 @@
+[Unit]
+Description=Copr Status
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/plackup -Ilib
+WorkingDirectory=/var/www/copr-status
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
