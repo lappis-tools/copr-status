@@ -15,6 +15,15 @@ sub copr_monitor_url {
   return "http://copr.fedoraproject.org/api/coprs/$user/$repo/monitor/";
 }
 
+sub git_url {
+  my ( $domain, $spec_path, $branch, $package ) = @_;
+
+  $spec_path =~ s/<branch>/$branch/;
+  $spec_path =~ s/<package>/$package/g;
+
+  return "$domain/$spec_path";
+}
+
 sub copr_info {
   my ( $user, $repo, $branch ) = @_;
 
@@ -37,7 +46,10 @@ sub copr_info {
   }
 
   foreach my $key (keys %{$info}) {
-    my $spec = $ua->get("https://softwarepublico.gov.br/gitlab/softwarepublico/softwarepublico/raw/$branch/src/pkg-rpm/$key/$key.spec");
+    my $git_url = git_url('http://softwarepublico.gov.br',
+                          'gitlab/softwarepublico/softwarepublico/raw/<branch>/src/pkg-rpm/<package>/<package>.spec',
+                          $branch, $key);
+    my $spec = $ua->get($git_url);
     my $version = $1 if $spec->decoded_content =~ /^Version:\s*([^\s]+)\s*$/m;
     if($version =~ /%\{version\}/) {
       $version = $1 if $spec->decoded_content =~ /define version\s*([^\s]+)\s*$/m;
