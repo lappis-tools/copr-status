@@ -45,10 +45,10 @@ sub copr_info {
     $info->{$package}->{$repo."_version"} = $version if $status eq "succeeded";
   }
 
-  foreach my $key (keys %{$info}) {
+  foreach my $package (keys %{$info}) {
     my $git_url = git_url('http://softwarepublico.gov.br',
                           'gitlab/softwarepublico/softwarepublico/raw/<branch>/src/pkg-rpm/<package>/<package>.spec',
-                          $branch, $key);
+                          $branch, $package);
     my $spec = $ua->get($git_url);
     my $version = $1 if $spec->decoded_content =~ /^Version:\s*([^\s]+)\s*$/m;
     if($version =~ /%\{version\}/) {
@@ -58,7 +58,7 @@ sub copr_info {
     my $release = 'no_release';
     $release = $1 if $spec->decoded_content =~ /^Release:\s*([^\s]+)\s*$/m;
     $version = "$version-$release";
-    $info->{$key}->{'git_version_'.$branch} = $version;
+    $info->{$package}->{'git_version_'.$branch} = $version;
   }
 
 }
@@ -67,12 +67,12 @@ sub compare_versions {
   copr_info('softwarepublico', 'v4', 'stable-4.x');
   copr_info('softwarepublico', 'v5', 'master');
   my $match = {};
-  foreach my $key (keys %{$info}) {
-    if($info->{$key}->{'v5_version'} eq $info->{$key}->{git_version_master}) {
-      $match->{$key} = 1;
+  foreach my $package (keys %{$info}) {
+    if($info->{$package}->{'v5_version'} eq $info->{$package}->{git_version_master}) {
+      $match->{$package} = 1;
     }
     else {
-      $match->{$key} = 0;
+      $match->{$package} = 0;
     }
   }
 
@@ -83,17 +83,17 @@ sub info2html {
   copr_info('softwarepublico', 'v4', 'stable-4.x');
   copr_info('softwarepublico', 'v5', 'master');
   my $table_entries="";
-  foreach my $key (keys %{$info}) {
+  foreach my $package (keys %{$info}) {
     my $fill_v4_row;
     my $fill_v5_row;
-    if($info->{$key}->{'v4_version'} eq $info->{$key}->{'git_version_stable-4.x'}) {
+    if($info->{$package}->{'v4_version'} eq $info->{$package}->{'git_version_stable-4.x'}) {
       $fill_v4_row = "success";
     }
     else {
       $fill_v4_row = "danger";
     }
 
-    if($info->{$key}->{'v5_version'} eq $info->{$key}->{git_version_master}) {
+    if($info->{$package}->{'v5_version'} eq $info->{$package}->{git_version_master}) {
       $fill_v5_row = "success";
     }
     else {
@@ -101,11 +101,11 @@ sub info2html {
     }
 
     $table_entries .= "<tr>
-    <td><b>$key</b></td>
-    <td>$info->{$key}->{'git_version_stable-4.x'}</td>
-    <td class=\"$fill_v4_row\">$info->{$key}->{'v4_version'}</td>
-    <td>$info->{$key}->{'git_version_master'}</td>
-    <td class=\"$fill_v5_row\">$info->{$key}->{'v5_version'}</td>
+    <td><b>$package</b></td>
+    <td>$info->{$package}->{'git_version_stable-4.x'}</td>
+    <td class=\"$fill_v4_row\">$info->{$package}->{'v4_version'}</td>
+    <td>$info->{$package}->{'git_version_master'}</td>
+    <td class=\"$fill_v5_row\">$info->{$package}->{'v5_version'}</td>
     </tr>";
   }
 
