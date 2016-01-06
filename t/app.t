@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use Test::More;
 
-BEGIN { use_ok('CoprStatus') }
+BEGIN { use_ok('CoprStatus'); }
 
 my $info = CoprStatus::copr_info();
 ok(ref($info), 'HASH');
@@ -26,5 +26,9 @@ my $table = CoprStatus::info2html();
 like($table, qr/danger|success/m);
 my $html = CoprStatus::build_html();
 like($html, qr/SPB Copr Status/m);
+
+my $monitor_url = copr_monitor_url("foo", "bar");
+my $test_url =  "http://copr.fedoraproject.org/api/coprs/foo/bar/monitor/";
+is($monitor_url, $test_url);
 
 done_testing();

@@ -7,14 +7,19 @@ use LWP::UserAgent;
 
 $ENV{'PERL_LWP_SSL_VERIFY_HOSTNAME'} = 0;
 
+sub copr_monitor_url {
+  my ( $user, $repo ) = @_;
+  return "http://copr.fedoraproject.org/api/coprs/$user/$repo/monitor/";
+}
+
 sub copr_info {
   my $ua = LWP::UserAgent->new;
   $ua->timeout(300);
   $ua->env_proxy;
   $ua->ssl_opts(SSL_verify_mode => 0x00);
 
-  my $result_v4 = $ua->get("http://copr.fedoraproject.org/api/coprs/softwarepublico/v4/monitor/");
-  my $result_v5 = $ua->get("http://copr.fedoraproject.org/api/coprs/softwarepublico/v5/monitor/");
+  my $result_v4 = $ua->get(copr_monitor_url("softwarepublico", "v4"));
+  my $result_v5 = $ua->get(copr_monitor_url("softwarepublico", "v5"));
 
   my $json = JSON->new->allow_nonref;
 
