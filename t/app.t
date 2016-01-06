@@ -4,7 +4,11 @@ use Test::More;
 
 BEGIN { use_ok('CoprStatus'); }
 
-my $info = CoprStatus::copr_info();
+CoprStatus::copr_info('softwarepubico', 'v4', 'stable-4.x');
+CoprStatus::copr_info('softwarepubico', 'v5', 'master');
+
+my $info = $CoprStatus::info;
+
 ok(ref($info), 'HASH');
 foreach my $key (keys %{$info}) {
   ok(ref($info->{$key}), 'HASH');
@@ -24,10 +28,21 @@ foreach my $key (keys %{$match}) {
 
 my $table = CoprStatus::info2html();
 like($table, qr/danger|success/m);
-my $html = CoprStatus::build_html();
+
+my $data = {
+  title => "SPB Copr Status",
+  table_entries => $table
+};
+
+my $template = Text::Template->new(
+  TYPE => 'FILE',
+  SOURCE => 'template.html.tt'
+);
+
+my $html = CoprStatus::build_html($data, $template);
 like($html, qr/SPB Copr Status/m);
 
-my $monitor_url = copr_monitor_url("foo", "bar");
+my $monitor_url = CoprStatus::copr_monitor_url("foo", "bar");
 my $test_url =  "http://copr.fedoraproject.org/api/coprs/foo/bar/monitor/";
 is($monitor_url, $test_url);
 
