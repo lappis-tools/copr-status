@@ -48,7 +48,8 @@ sub copr_info {
       $version = $1 if $spec->decoded_content =~ /define version\s*([^\s]+)\s*$/m;
     }
 
-    my $release = $1 if $spec->decoded_content =~ /^Release:\s*([^\s]+)\s*$/m;
+    my $release = 'no_release';
+    $release = $1 if $spec->decoded_content =~ /^Release:\s*([^\s]+)\s*$/m;
     $version = "$version-$release";
     $info->{$key}->{'git_version_master'} = $version;
   }
@@ -60,7 +61,8 @@ sub copr_info {
       $version = $1 if $spec->decoded_content =~ /define version\s*([^\s]+)\s*$/m;
     }
 
-    my $release = $1 if $spec->decoded_content =~ /^Release:\s*([^\s]+)\s*$/m;
+    my $release = 'no_release';
+    $release = $1 if $spec->decoded_content =~ /^Release:\s*([^\s]+)\s*$/m;
     $version = "$version-$release";
     $info->{$key}->{'git_version_stable_4'} = $version;
   }
