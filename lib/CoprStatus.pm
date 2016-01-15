@@ -64,7 +64,7 @@ sub copr_info {
 }
 
 sub compare_versions {
-  copr_info('softwarepublico', 'v4', 'stable-4.x');
+  copr_info('softwarepublico', 'v4', 'stable-4.1');
   copr_info('softwarepublico', 'v5', 'master');
   my $match = {};
   foreach my $package (keys %{$info}) {
@@ -80,13 +80,13 @@ sub compare_versions {
 }
 
 sub info2html {
-  copr_info('softwarepublico', 'v4', 'stable-4.x');
+  copr_info('softwarepublico', 'v4', 'stable-4.1');
   copr_info('softwarepublico', 'v5', 'master');
   my $table_entries="";
   foreach my $package (keys %{$info}) {
     my $fill_v4_row;
     my $fill_v5_row;
-    if($info->{$package}->{'v4_version'} eq $info->{$package}->{'git_version_stable-4.x'}) {
+    if($info->{$package}->{'v4_version'} eq $info->{$package}->{'git_version_stable-4.1'}) {
       $fill_v4_row = "success";
     }
     else {
@@ -102,7 +102,7 @@ sub info2html {
 
     $table_entries .= "<tr>
     <td><b>$package</b></td>
-    <td>$info->{$package}->{'git_version_stable-4.x'}</td>
+    <td>$info->{$package}->{'git_version_stable-4.1'}</td>
     <td class=\"$fill_v4_row\">$info->{$package}->{'v4_version'}</td>
     <td>$info->{$package}->{'git_version_master'}</td>
     <td class=\"$fill_v5_row\">$info->{$package}->{'v5_version'}</td>
@@ -142,7 +142,7 @@ sub serve_html {
 };
 
 sub serve_json {
-  copr_info('softwarepublico', 'v4', 'stable-4.x');
+  copr_info('softwarepublico', 'v4', 'stable-4.1');
   copr_info('softwarepublico', 'v5', 'master');
   my $json = JSON->new->allow_nonref;
   my $json_info = $json->encode($info);
