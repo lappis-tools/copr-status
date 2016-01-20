@@ -25,6 +25,7 @@ installed:
 * Plack
 * LWP::UserAgent
 * JSON
+* YAML:XS
 * Text::Template
 * LWP::Protocol::https
 

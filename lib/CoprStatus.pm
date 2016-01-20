@@ -2,6 +2,7 @@ package CoprStatus;
 use strict;
 use warnings;
 use JSON;
+use YAML::XS 'LoadFile';
 use Text::Template;
 use LWP::UserAgent;
 use LWP::Simple;
@@ -10,6 +11,7 @@ $ENV{'PERL_LWP_SSL_VERIFY_HOSTNAME'} = 0;
 
 # hash with repos data
 our $info = {};
+my $config = LoadFile('config.yaml');
 
 sub copr_monitor_url {
   my ( $user, $repo ) = @_;
@@ -62,15 +64,19 @@ sub get_copr_versions {
 
 }
 
-sub copr_info {
-  my ( $user, $repo, $branch ) = @_;
-  get_copr_versions($user, $repo);
-  get_specs($branch);
+sub update_info {
+  my $user = $config->{User};
+  foreach my $repo (@{$config->{Repositories}}) {
+    get_copr_versions($user, $repo);
+  }
+
+  foreach my $branch (@{$config->{Branches}}) {
+    get_specs($branch);
+  }
 }
 
 sub compare_versions {
-  copr_info('softwarepublico', 'v4', 'stable-4.1');
-  copr_info('softwarepublico', 'v5', 'master');
+  update_info();
   my $match = {};
   foreach my $package (keys %{$info}) {
     if($info->{$package}->{'v5_version'} eq $info->{$package}->{git_version_master}) {
@@ -85,8 +91,7 @@ sub compare_versions {
 }
 
 sub info2html {
-  copr_info('softwarepublico', 'v4', 'stable-4.1');
-  copr_info('softwarepublico', 'v5', 'master');
+  update_info();
   my $table_entries="";
   foreach my $package (keys %{$info}) {
     my $fill_v4_row;
@@ -147,8 +152,7 @@ sub serve_html {
 };
 
 sub serve_json {
-  copr_info('softwarepublico', 'v4', 'stable-4.1');
-  copr_info('softwarepublico', 'v5', 'master');
+  update_info();
   my $json = JSON->new->allow_nonref;
   my $json_info = $json->encode($info);
   return [

@@ -4,8 +4,7 @@ use Test::More;
 
 BEGIN { use_ok('CoprStatus'); }
 
-CoprStatus::copr_info('softwarepublico', 'v4', 'stable-4.1');
-CoprStatus::copr_info('softwarepublico', 'v5', 'master');
+CoprStatus::update_info();
 
 my $info = $CoprStatus::info;
 
