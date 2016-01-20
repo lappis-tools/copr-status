@@ -4,6 +4,7 @@ use warnings;
 use JSON;
 use Text::Template;
 use LWP::UserAgent;
+use LWP::Simple;
 
 $ENV{'PERL_LWP_SSL_VERIFY_HOSTNAME'} = 0;
 
@@ -24,27 +25,12 @@ sub git_url {
   return "$domain/$spec_path";
 }
 
-sub copr_info {
-  my ( $user, $repo, $branch ) = @_;
-
+sub get_specs {
   my $ua = LWP::UserAgent->new;
   $ua->timeout(300);
   $ua->env_proxy;
   $ua->ssl_opts(SSL_verify_mode => 0x00);
-
-  my $result = $ua->get(copr_monitor_url($user, $repo));
-
-  my $json = JSON->new->allow_nonref;
-
-  my $dec_result = $json->decode($result->decoded_content);
-
-  foreach(@{$dec_result->{'packages'}}) {
-    my $package = $_->{'pkg_name'};
-    my $status = $_->{'results'}{'epel-7-x86_64'}{'status'};
-    my $version = $_->{'results'}{'epel-7-x86_64'}{'pkg_version'};
-    $info->{$package}->{$repo."_version"} = $version if $status eq "succeeded";
-  }
-
+  my ( $branch ) = @_;
   foreach my $package (keys %{$info}) {
     my $git_url = git_url('http://softwarepublico.gov.br',
                           'gitlab/softwarepublico/softwarepublico/raw/<branch>/src/pkg-rpm/<package>/<package>.spec',
@@ -60,7 +46,26 @@ sub copr_info {
     $version = "$version-$release";
     $info->{$package}->{'git_version_'.$branch} = $version;
   }
+}
 
+sub get_copr_versions {
+  my ( $user, $repo ) = @_;
+  my $result = get(copr_monitor_url($user, $repo));
+  my $json = JSON->new->allow_nonref;
+  my $dec_result = $json->decode($result);
+  foreach(@{$dec_result->{'packages'}}) {
+    my $package = $_->{'pkg_name'};
+    my $status = $_->{'results'}{'epel-7-x86_64'}{'status'};
+    my $version = $_->{'results'}{'epel-7-x86_64'}{'pkg_version'};
+    $info->{$package}->{$repo."_version"} = $version if $status eq "succeeded";
+  }
+
+}
+
+sub copr_info {
+  my ( $user, $repo, $branch ) = @_;
+  get_copr_versions($user, $repo);
+  get_specs($branch);
 }
 
 sub compare_versions {
