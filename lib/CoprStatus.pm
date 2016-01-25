@@ -27,24 +27,49 @@ sub git_url {
   return "$domain/$spec_path";
 }
 
-sub get_specs {
+sub download_specs {
+  my ( $branch, $user, $repo ) = @_;
+  return unless -e "data/copr/$user/$repo/monitor.json";
   my $ua = LWP::UserAgent->new;
   $ua->timeout(300);
   $ua->env_proxy;
   $ua->ssl_opts(SSL_verify_mode => 0x00);
-  my ( $branch ) = @_;
-  foreach my $package (keys %{$info}) {
+  open(my $fh, "<", "data/copr/$user/$repo/monitor.json") or die;
+  my $result = do { local $/; <$fh> };
+  close($fh);
+  my $json = JSON->new->allow_nonref;
+  my $dec_result = $json->decode($result);
+  foreach(@{$dec_result->{'packages'}}) {
+    my $package = $_->{'pkg_name'};
     my $git_url = git_url('http://softwarepublico.gov.br',
                           'gitlab/softwarepublico/softwarepublico/raw/<branch>/src/pkg-rpm/<package>/<package>.spec',
                           $branch, $package);
-    my $spec = $ua->get($git_url);
-    my $version = $1 if $spec->decoded_content =~ /^Version:\s*([^\s]+)\s*$/m;
+    `mkdir -p data/git/$branch`;
+    my $spec_filename = 'data/git/'.$branch.'/'.$package.'.spec';
+    $ua->mirror( $git_url, $spec_filename );
+  }
+}
+
+sub download_copr_versions {
+  my ( $user, $repo ) = @_;
+    `mkdir -p data/copr/$user/$repo`;
+  my $result = mirror(copr_monitor_url($user, $repo), "data/copr/$user/$repo/monitor.json");
+}
+
+sub get_specs {
+  my ( $branch ) = @_;
+  foreach my $package (keys %{$info}) {
+    next unless -e "data/git/$branch/$package.spec";
+    open(my $fh, "<", "data/git/$branch/$package.spec") or die;
+    my $spec = do { local $/; <$fh> };
+    close($fh);
+    my $version = $1 if $spec =~ /^Version:\s*([^\s]+)\s*$/m;
     if($version =~ /%\{version\}/) {
-      $version = $1 if $spec->decoded_content =~ /define version\s*([^\s]+)\s*$/m;
+      $version = $1 if $spec =~ /define version\s*([^\s]+)\s*$/m;
     }
 
     my $release = 'no_release';
-    $release = $1 if $spec->decoded_content =~ /^Release:\s*([^\s]+)\s*$/m;
+    $release = $1 if $spec =~ /^Release:\s*([^\s]+)\s*$/m;
     $version = "$version-$release";
     $info->{$package}->{'git_version_'.$branch} = $version;
   }
@@ -52,7 +77,10 @@ sub get_specs {
 
 sub get_copr_versions {
   my ( $user, $repo ) = @_;
-  my $result = get(copr_monitor_url($user, $repo));
+  return unless -e "data/copr/$user/$repo/monitor.json";
+  open(my $fh, "<", "data/copr/$user/$repo/monitor.json") or die;
+  my $result = do { local $/; <$fh> };
+  close($fh);
   my $json = JSON->new->allow_nonref;
   my $dec_result = $json->decode($result);
   foreach(@{$dec_result->{'packages'}}) {
@@ -61,7 +89,6 @@ sub get_copr_versions {
     my $version = $_->{'results'}{'epel-7-x86_64'}{'pkg_version'};
     $info->{$package}->{$repo."_version"} = $version if $status eq "succeeded";
   }
-
 }
 
 sub update_info {
@@ -72,6 +99,23 @@ sub update_info {
 
   foreach my $branch (@{$config->{Branches}}) {
     get_specs($branch);
+  }
+}
+
+sub update_files {
+  while(1) {
+    my $user = $config->{User};
+    foreach my $repo (@{$config->{Repositories}}) {
+      download_copr_versions($user, $repo);
+    }
+
+    my $repo_index = 0;
+    foreach my $branch (@{$config->{Branches}}) {
+      download_specs($branch, $user, ${$config->{Repositories}}[$repo_index]);
+      $repo_index += 1;
+    }
+
+    sleep $config->{UpdateRate};
   }
 }
 
@@ -172,5 +216,10 @@ sub serve_json_status {
     [ $json_info ],
   ];
 };
+
+my $child_pid = fork();
+if($child_pid) {
+  update_files();
+}
 
 1;
