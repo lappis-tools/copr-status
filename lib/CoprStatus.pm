@@ -41,11 +41,11 @@ sub download_specs {
   my $dec_result = $json->decode($result);
   foreach(@{$dec_result->{'packages'}}) {
     my $package = $_->{'pkg_name'};
-    my $git_url = git_url('http://softwarepublico.gov.br',
-                          'gitlab/softwarepublico/softwarepublico/raw/<branch>/src/pkg-rpm/<package>/<package>.spec',
+    my $git_url = git_url($config->{GitDomain},
+                          $config->{GitSpecPath},
                           $branch, $package);
     `mkdir -p data/git/$branch`;
-    my $spec_filename = 'data/git/'.$branch.'/'.$package.'.spec';
+    my $spec_filename = "data/git/$branch/$package.spec";
     $ua->mirror( $git_url, $spec_filename );
   }
 }
@@ -138,28 +138,28 @@ sub info2html {
   update_info();
   my $table_entries="";
   foreach my $package (keys %{$info}) {
-    my $fill_v4_row;
-    my $fill_v5_row;
+    my $fill_stable_row;
+    my $fill_dev_row;
     if($info->{$package}->{'copr'}->{${$config->{Repositories}}[0]} eq $info->{$package}->{'git'}->{${$config->{Branches}}[0]}) {
-      $fill_v4_row = "success";
+      $fill_stable_row = "success";
     }
     else {
-      $fill_v4_row = "danger";
+      $fill_stable_row = "danger";
     }
 
     if($info->{$package}->{'copr'}->{${$config->{Repositories}}[1]} eq $info->{$package}->{'git'}->{${$config->{Branches}}[1]}) {
-      $fill_v5_row = "success";
+      $fill_dev_row = "success";
     }
     else {
-      $fill_v5_row = "danger";
+      $fill_dev_row = "danger";
     }
 
     $table_entries .= "<tr>
     <td><b>$package</b></td>
     <td>$info->{$package}->{'git'}->{${$config->{Branches}}[0]}</td>
-    <td class=\"$fill_v4_row\">$info->{$package}->{'copr'}->{${$config->{Repositories}}[0]}</td>
+    <td class=\"$fill_stable_row\">$info->{$package}->{'copr'}->{${$config->{Repositories}}[0]}</td>
     <td>$info->{$package}->{'git'}->{${$config->{Branches}}[1]}</td>
-    <td class=\"$fill_v5_row\">$info->{$package}->{'copr'}->{${$config->{Repositories}}[1]}</td>
+    <td class=\"$fill_dev_row\">$info->{$package}->{'copr'}->{${$config->{Repositories}}[1]}</td>
     </tr>";
   }
 
