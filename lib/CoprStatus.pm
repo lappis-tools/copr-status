@@ -71,7 +71,7 @@ sub get_specs {
     my $release = 'no_release';
     $release = $1 if $spec =~ /^Release:\s*([^\s]+)\s*$/m;
     $version = "$version-$release";
-    $info->{$package}->{'git_version_'.$branch} = $version;
+    $info->{$package}->{'git'}->{$branch} = $version;
   }
 }
 
@@ -87,7 +87,7 @@ sub get_copr_versions {
     my $package = $_->{'pkg_name'};
     my $status = $_->{'results'}{'epel-7-x86_64'}{'status'};
     my $version = $_->{'results'}{'epel-7-x86_64'}{'pkg_version'};
-    $info->{$package}->{$repo."_version"} = $version if $status eq "succeeded";
+    $info->{$package}->{'copr'}->{$repo} = $version if $status eq "succeeded";
   }
 }
 
@@ -123,7 +123,7 @@ sub compare_versions {
   update_info();
   my $match = {};
   foreach my $package (keys %{$info}) {
-    if($info->{$package}->{'v5_version'} eq $info->{$package}->{git_version_master}) {
+    if($info->{$package}->{'copr'}->{${$config->{Repositories}}[1]} eq $info->{$package}->{'git'}->{${$config->{Branches}}[1]}) {
       $match->{$package} = 1;
     }
     else {
@@ -140,14 +140,14 @@ sub info2html {
   foreach my $package (keys %{$info}) {
     my $fill_v4_row;
     my $fill_v5_row;
-    if($info->{$package}->{'v4_version'} eq $info->{$package}->{'git_version_stable-4.2'}) {
+    if($info->{$package}->{'copr'}->{${$config->{Repositories}}[0]} eq $info->{$package}->{'git'}->{${$config->{Branches}}[0]}) {
       $fill_v4_row = "success";
     }
     else {
       $fill_v4_row = "danger";
     }
 
-    if($info->{$package}->{'v5_version'} eq $info->{$package}->{git_version_master}) {
+    if($info->{$package}->{'copr'}->{${$config->{Repositories}}[1]} eq $info->{$package}->{'git'}->{${$config->{Branches}}[1]}) {
       $fill_v5_row = "success";
     }
     else {
@@ -156,10 +156,10 @@ sub info2html {
 
     $table_entries .= "<tr>
     <td><b>$package</b></td>
-    <td>$info->{$package}->{'git_version_stable-4.2'}</td>
-    <td class=\"$fill_v4_row\">$info->{$package}->{'v4_version'}</td>
-    <td>$info->{$package}->{'git_version_master'}</td>
-    <td class=\"$fill_v5_row\">$info->{$package}->{'v5_version'}</td>
+    <td>$info->{$package}->{'git'}->{${$config->{Branches}}[0]}</td>
+    <td class=\"$fill_v4_row\">$info->{$package}->{'copr'}->{${$config->{Repositories}}[0]}</td>
+    <td>$info->{$package}->{'git'}->{${$config->{Branches}}[1]}</td>
+    <td class=\"$fill_v5_row\">$info->{$package}->{'copr'}->{${$config->{Repositories}}[1]}</td>
     </tr>";
   }
 
