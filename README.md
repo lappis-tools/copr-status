@@ -46,3 +46,16 @@ plackup [--port PORT_NUMBER] -Ilib
 ```
 plackup -Ilib
 ```
+
+----
+# Configuration
+
+> The file config.yaml sets all the needed parameters:
+
+* User: Copr user, the owner of the repository to be watched
+* UpdateRate: Rate in witch information on Git and Copr are updated
+* GitDomain: Forge system used to host git repositories, like github or gitlab.
+* GitSpecPath: Path to spec files in the git repository: use <branch> instead of the branch name and <package> instead of package names.
+* Repositories: name of Copr repositories for User.
+* Branches: name of git branches to be watched.
+
