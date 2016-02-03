@@ -11,7 +11,7 @@ my $info = $CoprStatus::info;
 ok(ref($info), 'HASH');
 foreach my $key (keys %{$info}) {
   ok(ref($info->{$key}), 'HASH');
-  ok($info->{$key}->{}->{'git'}->{'master'});
+  ok($info->{$key}->{'git'}->{'master'});
   ok($info->{$key}->{'copr'}->{'v4'});
   ok($info->{$key}->{'copr'}->{'v5'});
   like($info->{$key}->{'copr'}->{'v4'}, qr/[[:ascii:]]+-[[:ascii:]]+/);
