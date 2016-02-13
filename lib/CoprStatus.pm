@@ -157,9 +157,9 @@ sub info2html {
     $table_entries .= "<tr>
     <td><b>$package</b></td>
     <td>$info->{$package}->{'git'}->{${$config->{Branches}}[0]}</td>
-    <td class=\"$fill_stable_row\">$info->{$package}->{'copr'}->{${$config->{Repositories}}[0]}</td>
+    <td class=\"$fill_stable_row\" data-toggle=\"tooltip\" data-placement=\"top\" title=\"Submitter:\">$info->{$package}->{'copr'}->{${$config->{Repositories}}[0]}</td>
     <td>$info->{$package}->{'git'}->{${$config->{Branches}}[1]}</td>
-    <td class=\"$fill_dev_row\">$info->{$package}->{'copr'}->{${$config->{Repositories}}[1]}</td>
+    <td class=\"$fill_dev_row\" data-toggle=\"tooltip\" data-placement=\"top\" title=\"Submitter:\">$info->{$package}->{'copr'}->{${$config->{Repositories}}[1]}</td>
     </tr>";
   }
 
