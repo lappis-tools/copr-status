@@ -19,10 +19,18 @@ sub get_project_id {
 sub get_project_builds {
   my ( $user, $repo ) = @_;
   my $project_id = get_project_id($user, $repo);
-  my $builds_json = get("$copr_base_url/api_2/builds?limit=0&project_id=$project_id");
-  my $json = JSON->new->allow_nonref;
-  my $builds_data = $json->decode($builds_json);
-  return @{$builds_data->{builds}};
+  my @builds;
+  my $limit = 100;
+  my $offset = 0;
+  while($limit == 100) {
+    my $builds_json = get("$copr_base_url/api_2/builds?project_id=$project_id&limit=100&offset=$offset");
+    my $json = JSON->new->allow_nonref;
+    my $builds_data = $json->decode($builds_json);
+    push(@builds, @{$builds_data->{builds}});
+    $offset += (scalar @builds);
+    $limit = (scalar @builds);
+  }
+  return @builds;
 }
 
 # gets all latest builds of each package

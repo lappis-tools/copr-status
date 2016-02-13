@@ -6,17 +6,13 @@ use YAML::XS 'LoadFile';
 use Text::Template;
 use LWP::UserAgent;
 use LWP::Simple;
+use Copr::Api;
 
 $ENV{'PERL_LWP_SSL_VERIFY_HOSTNAME'} = 0;
 
 # hash with repos data
 our $info = {};
 my $config = LoadFile('config.yaml');
-
-sub copr_monitor_url {
-  my ( $user, $repo ) = @_;
-  return "http://copr.fedoraproject.org/api/coprs/$user/$repo/monitor/";
-}
 
 sub git_url {
   my ( $domain, $spec_path, $branch, $package ) = @_;
@@ -50,12 +46,6 @@ sub download_specs {
   }
 }
 
-sub download_copr_versions {
-  my ( $user, $repo ) = @_;
-    `mkdir -p data/copr/$user/$repo`;
-  my $result = mirror(copr_monitor_url($user, $repo), "data/copr/$user/$repo/monitor.json");
-}
-
 sub get_specs {
   my ( $branch ) = @_;
   foreach my $package (keys %{$info}) {
@@ -77,17 +67,12 @@ sub get_specs {
 
 sub get_copr_versions {
   my ( $user, $repo ) = @_;
-  return unless -e "data/copr/$user/$repo/monitor.json";
-  open(my $fh, "<", "data/copr/$user/$repo/monitor.json") or die;
-  my $result = do { local $/; <$fh> };
-  close($fh);
-  my $json = JSON->new->allow_nonref;
-  my $dec_result = $json->decode($result);
-  foreach(@{$dec_result->{'packages'}}) {
-    my $package = $_->{'pkg_name'};
-    my $status = $_->{'results'}{'epel-7-x86_64'}{'status'};
-    my $version = $_->{'results'}{'epel-7-x86_64'}{'pkg_version'};
-    $info->{$package}->{'copr'}->{$repo} = $version if $status eq "succeeded";
+  my %latest_packages = Copr::Api::get_latest_packages($user, $repo);
+  foreach my $package (keys %latest_packages) {
+    my $version = $latest_packages{$package}{version};
+    my $submitter = $latest_packages{$package}{submitter};
+    $info->{$package}->{'copr'}->{$repo}->{version} = $version;
+    $info->{$package}->{'copr'}->{$repo}->{submitter} = $submitter;
   }
 }
 
@@ -105,10 +90,6 @@ sub update_info {
 sub update_files {
   while(1) {
     my $user = $config->{User};
-    foreach my $repo (@{$config->{Repositories}}) {
-      download_copr_versions($user, $repo);
-    }
-
     my $repo_index = 0;
     foreach my $branch (@{$config->{Branches}}) {
       download_specs($branch, $user, ${$config->{Repositories}}[$repo_index]);
@@ -123,7 +104,7 @@ sub compare_versions {
   update_info();
   my $match = {};
   foreach my $package (keys %{$info}) {
-    if($info->{$package}->{'copr'}->{${$config->{Repositories}}[1]} eq $info->{$package}->{'git'}->{${$config->{Branches}}[1]}) {
+    if($info->{$package}->{'copr'}->{${$config->{Repositories}}[1]}->{version} eq $info->{$package}->{'git'}->{${$config->{Branches}}[1]}) {
       $match->{$package} = 1;
     }
     else {
@@ -140,14 +121,14 @@ sub info2html {
   foreach my $package (keys %{$info}) {
     my $fill_stable_row;
     my $fill_dev_row;
-    if($info->{$package}->{'copr'}->{${$config->{Repositories}}[0]} eq $info->{$package}->{'git'}->{${$config->{Branches}}[0]}) {
+    if($info->{$package}->{'copr'}->{${$config->{Repositories}}[0]}->{version} eq $info->{$package}->{'git'}->{${$config->{Branches}}[0]}) {
       $fill_stable_row = "success";
     }
     else {
       $fill_stable_row = "danger";
     }
 
-    if($info->{$package}->{'copr'}->{${$config->{Repositories}}[1]} eq $info->{$package}->{'git'}->{${$config->{Branches}}[1]}) {
+    if($info->{$package}->{'copr'}->{${$config->{Repositories}}[1]}->{version} eq $info->{$package}->{'git'}->{${$config->{Branches}}[1]}) {
       $fill_dev_row = "success";
     }
     else {
@@ -157,9 +138,9 @@ sub info2html {
     $table_entries .= "<tr>
     <td><b>$package</b></td>
     <td>$info->{$package}->{'git'}->{${$config->{Branches}}[0]}</td>
-    <td class=\"$fill_stable_row\" data-toggle=\"tooltip\" data-placement=\"top\" title=\"Submitter:\">$info->{$package}->{'copr'}->{${$config->{Repositories}}[0]}</td>
+    <td class=\"$fill_stable_row\" data-toggle=\"tooltip\" data-placement=\"top\" title=\"Submitter: $info->{$package}->{'copr'}->{${$config->{Repositories}}[0]}->{submitter}\">$info->{$package}->{'copr'}->{${$config->{Repositories}}[0]}->{version}</td>
     <td>$info->{$package}->{'git'}->{${$config->{Branches}}[1]}</td>
-    <td class=\"$fill_dev_row\" data-toggle=\"tooltip\" data-placement=\"top\" title=\"Submitter:\">$info->{$package}->{'copr'}->{${$config->{Repositories}}[1]}</td>
+    <td class=\"$fill_dev_row\" data-toggle=\"tooltip\" data-placement=\"top\" title=\"Submitter: $info->{$package}->{'copr'}->{${$config->{Repositories}}[1]}->{submitter}\">$info->{$package}->{'copr'}->{${$config->{Repositories}}[1]}->{version}</td>
     </tr>";
   }
 
