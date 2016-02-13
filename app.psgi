@@ -21,6 +21,6 @@ my $app = sub {
 };
 
 builder {
-    enable "Static", path => qr!^(/css|/js)!, pass_through => 1;
+    enable "Static", path => qr!^(/static/css|/static/js|/static/fonts)!, pass_through => 1;
       $app;
 }

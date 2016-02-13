@@ -1,20 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<!--[if IE 9]><html lang="en-us" class="ie9"><![endif]-->
+<!--[if gt IE 9]><!-->
+<html lang="en-us">
+<!--<![endif]-->
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{$title}</title>
-
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-<!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/patternfly.min.css" >
+    <link rel="stylesheet" href="/static/css/patternfly-additions.min.css" >
+    <script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
+    <script src="/static/js/patternfly.min.js"></script>
   </head>
-  <body>
-    <div class="container">
 
+  <body>
+    <div class="container-fluid">
       <div class="header clearfix">
         <nav>
           <ul class="nav nav-pills pull-right">
@@ -29,48 +32,42 @@
 
       <div class="jumbotron">
         <p class="lead">This app fetches data from softwarepublico Copr EPEL7 repositories and compares package versions. In short, a red cell means that the package version differ from the git one (<b>note that this is NOT necessarily a bad thing</b>).</p>
-        <div class="row">
-          <div class="col-lg-6 col-lg-offset-3 col-md-8 col-md-offset-2 col-sm-12 col-xs-12">
-            <table class="table table-striped">
-              <tr>
-                <td class="success">Versions match</td>
-              </tr>
-              <tr>
-                <td class="danger">Versions do not match</td>
-              </tr>
-            </table>
-          </div>
-        </div>
       </div>
 
       <div class="row">
-        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 table-responsive">
-          <table class="table table-striped">
-            <tr>
-              <th></th>
-              <th>Release 4</th>
-              <th></th>
-              <th>Release 5</th>
-              <th></th>
-            </tr>
-            <tr>
-              <th>PACKAGE</th>
-              <th>git:stable-4.2</th>
-              <th>softwarepublico/v4</th>
-              <th>git:master</th>
-              <th>softwarepublico/v5</th>
-            </tr>
-              {$table_entries}
-          </table>
-        </div>
-      </div>
+        <div class="col-md-10 col-md-offset-1">
+        <!--<div class="col-lg-6 col-lg-offset-3 col-md-8 col-md-offset-2 col-sm-12 col-xs-12">-->
+<table class="datatable table table-striped table-bordered">
+  <thead>
+    <tr>
+      <th></th>
+      <th colspan="2">Release 4</th>
+      <th colspan="2">Release 5</th>
+    </tr>
+    <tr>
+      <th>PACKAGE</th>
+      <th>git:stable-4.2</th>
+      <th>softwarepublico/v4</th>
+      <th>git:master</th>
+      <th>softwarepublico/v5</th>
+    </tr>
+  </thead>
+  <tbody>
+    {$table_entries}
+  </tbody>
+</table>
+        </div><!-- /col -->
+      </div><!-- /row -->
+    </div><!-- /container -->
+<footer class="footer">
+  <p>2016 LAPPIS - #softwarepublico, #lappis @ Freenode</p>
+</footer>
+    <script>
+      // Initialize Datatables
+      $(document).ready( function() \{
+        $('.datatable').dataTable();
+      \});
+    </script>
 
-        <footer class="footer">
-          <p>2016 LAPPIS - #softwarepublico, #lappis @ Freenode</p>
-        </footer>
-
-      </div>
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
   </body>
 </html>
