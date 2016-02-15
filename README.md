@@ -28,6 +28,7 @@ installed:
 * YAML:XS
 * Text::Template
 * LWP::Protocol::https
+* RPM::VersionCompare
 
 > Run tests:
 
