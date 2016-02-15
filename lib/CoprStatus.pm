@@ -25,18 +25,12 @@ sub git_url {
 
 sub download_specs {
   my ( $branch, $user, $repo ) = @_;
-  return unless -e "data/copr/$user/$repo/monitor.json";
   my $ua = LWP::UserAgent->new;
   $ua->timeout(300);
   $ua->env_proxy;
   $ua->ssl_opts(SSL_verify_mode => 0x00);
-  open(my $fh, "<", "data/copr/$user/$repo/monitor.json") or die;
-  my $result = do { local $/; <$fh> };
-  close($fh);
-  my $json = JSON->new->allow_nonref;
-  my $dec_result = $json->decode($result);
-  foreach(@{$dec_result->{'packages'}}) {
-    my $package = $_->{'pkg_name'};
+  my %latest_packages = Copr::Api::get_latest_packages($user, $repo);
+  foreach my $package (keys %latest_packages) {
     my $git_url = git_url($config->{GitDomain},
                           $config->{GitSpecPath},
                           $branch, $package);
