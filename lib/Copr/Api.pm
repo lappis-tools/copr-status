@@ -47,7 +47,7 @@ sub get_latest_packages {
       $latest_packages{$package_name}{version} = $package_version;
       $latest_packages{$package_name}{submitter} = $package_submitter;
     }
-    elsif(RPM::VersionCompare::rpmvercmp($latest_packages{$package_name}{version}, $package_version) == 1) {
+    elsif(RPM::VersionCompare::labelCompare($latest_packages{$package_name}{version}, $package_version) == 1) {
       next;
     }
     else {
