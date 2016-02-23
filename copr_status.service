@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 ExecStart=/usr/bin/plackup -Ilib
-WorkingDirectory=/var/www/copr-status
+WorkingDirectory=path/to/copr-status
 Restart=on-failure
 
 [Install]
