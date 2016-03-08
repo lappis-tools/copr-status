@@ -192,9 +192,4 @@ sub serve_json_status {
   ];
 };
 
-my $child_pid = fork();
-if($child_pid) {
-  update_files();
-}
-
 1;
