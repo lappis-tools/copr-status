@@ -3,8 +3,8 @@ UpdateRate: 600
 GitDomain: http://softwarepublico.gov.br
 GitSpecPath: gitlab/softwarepublico/softwarepublico/raw/<branch>/src/pkg-rpm/<package>/<package>.spec
 Repositories:
-  - v4
   - v5
+  - v6
 Branches:
-  - stable-4.2
+  - stable-5.0
   - master
