@@ -53,15 +53,15 @@
   <thead>
     <tr>
       <th></th>
-      <th colspan="2">Release 4</th>
       <th colspan="2">Release 5</th>
+      <th colspan="2">Release 6</th>
     </tr>
     <tr>
       <th>PACKAGE</th>
-      <th>git:stable-4.2</th>
-      <th>softwarepublico/v4</th>
-      <th>git:master</th>
+      <th>git:stable-5.0</th>
       <th>softwarepublico/v5</th>
+      <th>git:master</th>
+      <th>softwarepublico/v6</th>
     </tr>
   </thead>
   <tbody>
