@@ -155,7 +155,11 @@ our %ROUTING = (
 sub serve_html {
   my $data = {
     title => "SPB Copr Status",
-    table_entries => info2html()
+    table_entries => info2html(),
+    branch0 => ${$config->{Branches}}[0],
+    branch1 => ${$config->{Branches}}[1],
+    repo0 => ${$config->{Repositories}}[0],
+    repo1 => ${$config->{Repositories}}[1]
   };
 
   my $template = Text::Template->new(

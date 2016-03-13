@@ -58,10 +58,10 @@
     </tr>
     <tr>
       <th>PACKAGE</th>
-      <th>git:stable-5.0</th>
-      <th>softwarepublico/v5</th>
-      <th>git:master</th>
-      <th>softwarepublico/v6</th>
+      <th>git:{$branch0}</th>
+      <th>softwarepublico/{$repo0}</th>
+      <th>git:{$branch1}</th>
+      <th>softwarepublico/{$repo1}</th>
     </tr>
   </thead>
   <tbody>
