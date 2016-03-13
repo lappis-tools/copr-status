@@ -3,7 +3,7 @@ Description=Copr Status
 After=network.target
 
 [Service]
-ExecStart=/usr/bin/plackup -Ilib
+ExecStart=/usr/bin/perl -Ilib util/start.pl
 WorkingDirectory=path/to/copr-status
 Restart=on-failure
 

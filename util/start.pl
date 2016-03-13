@@ -16,5 +16,11 @@ sub update_files {
   }
 }
 
-update_files();
+my $child_pid = fork();
+if($child_pid) {
+  update_files();
+  exit(0);
+}
+
+system("plackup -Ilib");
 
