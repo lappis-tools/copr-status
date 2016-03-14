@@ -49,9 +49,11 @@ plackup [--port PORT_NUMBER] -Ilib
 plackup -Ilib
 ```
 
-> There is a util/update_files.pl file that must be running
+> There is a subroutine in util/start.pl file that must be running
 in order to update spec files.
-
+> The util/start.pl script is called by the systemd unit file provided
+in order to serve the app and run the subroutine that updates the 
+spec files.
 ----
 # Configuration
 
