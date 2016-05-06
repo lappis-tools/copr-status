@@ -4,7 +4,7 @@ GitDomain: http://softwarepublico.gov.br
 GitSpecPath: gitlab/softwarepublico/softwarepublico/raw/<branch>/src/pkg-rpm/<package>/<package>.spec
 Repositories:
   - v5
-  - v6
+  - experimental
 Branches:
   - stable-5.0
   - master
